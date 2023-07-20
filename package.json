@@ -4,7 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint-staged": "lint-staged",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint"
   },
   "repository": {
     "type": "git",
@@ -19,7 +29,14 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "http-proxy-middleware": "^2.0.6",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.45.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.3"
   }
 }

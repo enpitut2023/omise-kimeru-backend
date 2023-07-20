@@ -1,23 +1,31 @@
 const express = require('express');
 const cors = require('cors');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-
-const simpleRequestLogger = (proxyServer, options) => {
-  proxyServer.on('proxyReq', (proxyReq, req, res) => {
-    console.log(`[HPM] [${req.method}] ${req.url}`); // outputs: [HPM] GET /users
-  });
-}
+const morgan = require('morgan');
+const request = require('request');
 
 const app = express();
-app.use(cors())
 
-app.use(
-  '/proxy',
-  createProxyMiddleware({
-    target: 'https://webservice.recruit.co.jp',
-    changeOrigin: true,
-    plugins: [simpleRequestLogger],
-  })
+app.use(morgan(':method :url :status'));
+app.use(cors());
+
+app.get(
+  '/hotpepper-proxy',
+  (req, res) => {
+    const url = 'http://webservice.recruit.co.jp/hotpepper/gourmet/v1';
+
+    const params = {
+      key: 'd9a6f98b0866d869',
+      format: 'json',
+      ...req.query,
+    };
+    request.get({ url, qs: params }, (error, response, body) => {
+      if (error) {
+        console.log(error);
+        res.status(500).json({ error: 'internal server error' });
+      }
+      res.status(response.statusCode).send(body);
+    });
+  },
 );
 
 app.listen(3001);
